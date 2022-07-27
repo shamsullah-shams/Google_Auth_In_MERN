@@ -1,22 +1,24 @@
-import './App.css';
 import { useEffect } from "react";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 function App() {
+  // @@ handling google callback
   const callbackHandling = (response) => {
-    var {
-      name,
-      email_verified,
-      email,
-    } = jwt_decode(response.credential);
-    console.log(name,
-      email_verified,
-      email);
+    var { name, email_verified, email, } = jwt_decode(response.credential);
+    axios.post('http://localhost:9000/api/google/signin', {
+      name: name,
+      email: email,
+      email_verified: email_verified,
+    }).then(response => {
+      console.log(response);
+    }).catch(err => console.log(err));
   }
+
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
-      client_id: "224489536190-2uh1fbq6c3sq4ug36tbhg9amc675nkgb.apps.googleusercontent.com",
+      client_id: "Your Google Client Id",
       callback: callbackHandling
     })
 
@@ -27,17 +29,10 @@ function App() {
         size: "large",
       }
     )
-
-
   }, [])
 
   return (
-
-    <div>
-      <div id='signInDiv'>
-
-      </div>
-    </div>
+    <div id='signInDiv'></div>
   );
 }
 
